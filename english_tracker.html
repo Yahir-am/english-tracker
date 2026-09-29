@@ -1,0 +1,247 @@
+<div style="max-width: 900px; padding: 1rem 0;">
+
+<h2 style="font-size: 18px; font-weight: 500; margin: 0 0 1.5rem; color: var(--text-primary);">English learning tracker</h2>
+
+<div style="background: var(--surface-1); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 2rem;">
+  <h3 style="font-size: 14px; font-weight: 500; color: var(--text-secondary); margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Weekly activities</h3>
+  
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 0.5px solid var(--border);">
+          <th style="text-align: left; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">Day</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">🎧 Listen</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">📖 Read</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">🗣️ Speak</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">✍️ Write</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">🧠 Vocab</th>
+          <th style="text-align: center; padding: 12px 8px; font-weight: 500; color: var(--text-secondary);">✏️ Grammar</th>
+        </tr>
+      </thead>
+      <tbody id="trackerBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div style="background: var(--surface-1); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem;">
+  <h3 style="font-size: 14px; font-weight: 500; color: var(--text-secondary); margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Activity heatmap</h3>
+  
+  <div id="heatmap" style="display: grid; gap: 1.5rem;"></div>
+  
+  <div style="margin-top: 1rem; display: flex; gap: 1rem; font-size: 12px; color: var(--text-secondary); align-items: center;">
+    <span>Activity level:</span>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <div style="width: 16px; height: 16px; background: #e8e8e8; border-radius: 3px; border: 0.5px solid var(--border); dark-mode:#444;"></div>
+      <span>None</span>
+    </div>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <div style="width: 16px; height: 16px; background: #c8e6c9; border-radius: 3px;"></div>
+      <span>1–3</span>
+    </div>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <div style="width: 16px; height: 16px; background: #81c784; border-radius: 3px;"></div>
+      <span>4–5</span>
+    </div>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <div style="width: 16px; height: 16px; background: #43a047; border-radius: 3px;"></div>
+      <span>All 6</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const SKILLS = ['listening', 'reading', 'speaking', 'writing', 'vocabulary', 'grammar'];
+
+function getStorageKey() {
+  const today = new Date().toISOString().split('T')[0];
+  return `english-tracker-${today.slice(0, 7)}`;
+}
+
+function getWeekKey(date) {
+  const d = new Date(date);
+  const weekStart = new Date(d);
+  weekStart.setDate(d.getDate() - d.getDay() + 1);
+  return weekStart.toISOString().split('T')[0];
+}
+
+function loadData() {
+  const key = getStorageKey();
+  const data = localStorage.getItem(key);
+  if (data) return JSON.parse(data);
+  return {};
+}
+
+function saveData(data) {
+  const key = getStorageKey();
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function getCellKey(day, skill) {
+  return `${day}-${skill}`;
+}
+
+function initTrackerTable() {
+  const tbody = document.getElementById('trackerBody');
+  const data = loadData();
+  
+  DAYS.forEach((day, idx) => {
+    const row = document.createElement('tr');
+    row.style.borderBottom = '0.5px solid var(--border)';
+    
+    const dayCell = document.createElement('td');
+    dayCell.style.padding = '12px 8px';
+    dayCell.style.fontWeight = '500';
+    dayCell.style.color = 'var(--text-primary)';
+    dayCell.textContent = day.slice(0, 3);
+    row.appendChild(dayCell);
+    
+    SKILLS.forEach(skill => {
+      const cell = document.createElement('td');
+      cell.style.textAlign = 'center';
+      cell.style.padding = '12px 8px';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `${day}-${skill}`;
+      
+      const key = getCellKey(day, skill);
+      checkbox.checked = data[key] || false;
+      
+      checkbox.style.width = '18px';
+      checkbox.style.height = '18px';
+      checkbox.style.cursor = 'pointer';
+      checkbox.style.accentColor = '#43a047';
+      
+      checkbox.addEventListener('change', (e) => {
+        const newData = loadData();
+        newData[key] = e.target.checked;
+        saveData(newData);
+        updateHeatmap();
+      });
+      
+      cell.appendChild(checkbox);
+      row.appendChild(cell);
+    });
+    
+    tbody.appendChild(row);
+  });
+}
+
+function updateHeatmap() {
+  const heatmapDiv = document.getElementById('heatmap');
+  heatmapDiv.innerHTML = '';
+  
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  
+  for (let month = 0; month < 4; month++) {
+    const monthDate = new Date(currentYear, currentMonth + month, 1);
+    const monthName = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+    
+    const monthDiv = document.createElement('div');
+    monthDiv.innerHTML = `<div style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px;">${monthName}</div>`;
+    
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    grid.style.gap = '6px';
+    
+    const lastDay = new Date(currentYear, currentMonth + month + 1, 0).getDate();
+    const firstDay = monthDate.getDay();
+    
+    for (let i = 0; i < firstDay; i++) {
+      grid.appendChild(document.createElement('div'));
+    }
+    
+    const data = loadData();
+    
+    for (let day = 1; day <= lastDay; day++) {
+      const dayDate = new Date(currentYear, currentMonth + month, day);
+      const dayOfWeek = DAYS[dayDate.getDay() || 0];
+      
+      const square = document.createElement('div');
+      square.style.width = '20px';
+      square.style.height = '20px';
+      square.style.borderRadius = '3px';
+      square.style.border = '0.5px solid var(--border)';
+      square.style.display = 'flex';
+      square.style.alignItems = 'center';
+      square.style.justifyContent = 'center';
+      square.style.fontSize = '10px';
+      square.style.cursor = 'default';
+      square.title = dayDate.toDateString();
+      
+      const key = getCellKey(dayOfWeek, SKILLS[0]);
+      const completed = SKILLS.filter(s => data[getCellKey(dayOfWeek, s)]).length;
+      
+      if (completed === 0) {
+        square.style.background = '#e8e8e8';
+        square.style.color = 'transparent';
+      } else if (completed <= 3) {
+        square.style.background = '#c8e6c9';
+        square.style.color = '#2e7d32';
+      } else if (completed <= 5) {
+        square.style.background = '#81c784';
+        square.style.color = '#fff';
+      } else {
+        square.style.background = '#43a047';
+        square.style.color = '#fff';
+      }
+      
+      square.textContent = completed > 0 ? completed : '';
+      grid.appendChild(square);
+    }
+    
+    monthDiv.appendChild(grid);
+    heatmapDiv.appendChild(monthDiv);
+  }
+}
+
+initTrackerTable();
+updateHeatmap();
+</script>
+
+<style>
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--border-stronger);
+}
+
+input[type="checkbox"]:checked {
+  background: #43a047;
+  border-color: #43a047;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+  line-height: 1;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 1.5px var(--surface-2), 0 0 0 3px #43a047;
+}
+</style>
