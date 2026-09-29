@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>English Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: white; text-align: center; margin-bottom: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        h2 { color: #667eea; margin-bottom: 20px; font-size: 20px; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; text-align: center; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        td:first-child { text-align: left; font-weight: bold; background: #f9f9f9; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
+        .day-box { width: 100%; aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        .h0 { background: #eee; color: #999; }
+        .h1 { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); color: white; }
+        .h2 { background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; }
+        .h3 { background: linear-gradient(135deg, #55efc4, #00b894); color: white; }
+        .h4 { background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; }
+        .h5 { background: linear-gradient(135deg, #fab1a0, #e17055); color: white; }
+        .h6 { background: linear-gradient(135deg, #fd79a8, #e84393); color: white; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 20px; }
+        .stat { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-num { font-size: 24px; font-weight: bold; }
+        .stat-label { font-size: 12px; margin-top: 5px; opacity: 0.9; }
+        .month { margin-bottom: 25px; }
+        .month-name { font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇬🇧 English Tracker</h1>
+
+        <div class="card">
+            <h2>📅 Weekly Activities</h2>
+            <table>
+                <tr>
+                    <th>Day</th>
+                    <th>🎧</th>
+                    <th>📖</th>
+                    <th>🗣️</th>
+                    <th>✍️</th>
+                    <th>🧠</th>
+                    <th>✏️</th>
+                </tr>
+                <tr>
+                    <td>Mon</td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Monday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Tuesday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Wednesday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Thu</td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Thursday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Fri</td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Friday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Sat</td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Saturday" data-skill="5"></td>
+                </tr>
+                <tr>
+                    <td>Sun</td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="0"></td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="1"></td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="2"></td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="3"></td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="4"></td>
+                    <td><input type="checkbox" data-day="Sunday" data-skill="5"></td>
+                </tr>
+            </table>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num" id="today">0</div>
+                    <div class="stat-label">Today</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="active">0</div>
+                    <div class="stat-label">Days active</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="total">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔥 Activity Heatmap</h2>
+            <div id="heatmap"></div>
+        </div>
+    </div>
+
+    <script>
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const colors = ['h0', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+        function save() {
+            const data = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                if (cb.checked) {
+                    data[cb.dataset.day + '-' + cb.dataset.skill] = true;
+                }
+            });
+            localStorage.setItem('trackerData', JSON.stringify(data));
+            updateStats();
+            updateHeatmap();
+        }
+
+        function load() {
+            const data = JSON.parse(localStorage.getItem('trackerData') || '{}');
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                if (data[cb.dataset.day + '-' + cb.dataset.skill]) {
+                    cb.checked = true;
+                }
+            });
+        }
+
+        function updateStats() {
+            const data = JSON.parse(localStorage.getItem('trackerData') || '{}');
+            const today = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+            
+            let todayCount = 0;
+            for (let i = 0; i < 6; i++) {
+                if (data[today + '-' + i]) todayCount++;
+            }
+
+            let activeDays = new Set();
+            Object.keys(data).forEach(k => activeDays.add(k.split('-')[0]));
+
+            document.getElementById('today').textContent = todayCount;
+            document.getElementById('active').textContent = activeDays.size;
+            document.getElementById('total').textContent = Object.keys(data).length;
+        }
+
+        function updateHeatmap() {
+            const data = JSON.parse(localStorage.getItem('trackerData') || '{}');
+            const heatmap = document.getElementById('heatmap');
+            heatmap.innerHTML = '';
+
+            const now = new Date();
+            for (let m = 0; m < 4; m++) {
+                const date = new Date(now.getFullYear(), now.getMonth() + m, 1);
+                const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+                
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'month';
+                monthDiv.innerHTML = '<div class="month-name">' + monthName + '</div><div class="heatmap"></div>';
+
+                const grid = monthDiv.querySelector('.heatmap');
+                const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                const firstDay = date.getDay();
+
+                for (let i = 0; i < firstDay; i++) {
+                    grid.appendChild(document.createElement('div'));
+                }
+
+                for (let day = 1; day <= lastDay; day++) {
+                    const cellDate = new Date(date.getFullYear(), date.getMonth(), day);
+                    const dayName = days[cellDate.getDay() === 0 ? 6 : cellDate.getDay() - 1];
+                    
+                    let count = 0;
+                    for (let i = 0; i < 6; i++) {
+                        if (data[dayName + '-' + i]) count++;
+                    }
+
+                    const box = document.createElement('div');
+                    box.className = 'day-box ' + colors[count];
+                    box.textContent = count > 0 ? count : '';
+                    grid.appendChild(box);
+                }
+
+                heatmap.appendChild(monthDiv);
+            }
+        }
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', save);
+        });
+
+        load();
+        updateStats();
+        updateHeatmap();
+    </script>
+</body>
+</html>
