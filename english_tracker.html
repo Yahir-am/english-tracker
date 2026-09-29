@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Learning Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        th {
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        th:first-child {
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        input[type="checkbox"]:hover {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="checkbox"]:checked {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            height: 100%;
+        }
+
+        .heatmap-container {
+            margin-top: 2rem;
+        }
+
+        .month-section {
+            margin-bottom: 2rem;
+        }
+
+        .month-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .heatmap-day {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: default;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .heatmap-day:hover {
+            transform: scale(1.05);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .heatmap-empty {
+            background: #f0f0f0;
+            color: #ccc;
+        }
+
+        .heatmap-1 {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #d4a017;
+        }
+
+        .heatmap-2 {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+        }
+
+        .heatmap-3 {
+            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+            color: white;
+        }
+
+        .heatmap-4 {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+        }
+
+        .heatmap-5 {
+            background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+            color: white;
+        }
+
+        .heatmap-6 {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: white;
+        }
+
+        .legend {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .legend-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            th:first-child {
+                min-width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇬🇧 English Tracker</h1>
+            <p>B2 → C1 | 27 SEP - 31 DIC 2026</p>
+        </header>
+
+        <div class="card">
+            <h2>📅 Weekly Activities</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>🎧 Listen</th>
+                        <th>📖 Read</th>
+                        <th>🗣️ Speak</th>
+                        <th>✍️ Write</th>
+                        <th>🧠 Vocab</th>
+                        <th>✏️ Grammar</th>
+                    </tr>
+                </thead>
+                <tbody id="trackerBody"></tbody>
+            </table>
+
+            <div class="stats" id="statsContainer"></div>
+        </div>
+
+        <div class="card">
+            <h2>🔥 Activity Heatmap</h2>
+            <div class="heatmap-container" id="heatmap"></div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box" style="background: #f0f0f0;"></div>
+                    <span>0 activities</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);"></div>
+                    <span>1 activity</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);"></div>
+                    <span>2 activities</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);"></div>
+                    <span>3 activities</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);"></div>
+                    <span>4 activities</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);"></div>
+                    <span>5 activities</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);"></div>
+                    <span>All 6 activities</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const SKILLS = ['listening', 'reading', 'speaking', 'writing', 'vocabulary', 'grammar'];
+
+        function getStorageKey() {
+            return 'english-tracker-data';
+        }
+
+        function loadData() {
+            const data = localStorage.getItem(getStorageKey());
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveData(data) {
+            localStorage.setItem(getStorageKey(), JSON.stringify(data));
+        }
+
+        function getCellKey(day, skill) {
+            return `${day}-${skill}`;
+        }
+
+        function initTrackerTable() {
+            const tbody = document.getElementById('trackerBody');
+            const data = loadData();
+
+            DAYS.forEach(day => {
+                const row = document.createElement('tr');
+
+                const dayCell = document.createElement('td');
+                dayCell.textContent = day;
+                row.appendChild(dayCell);
+
+                SKILLS.forEach(skill => {
+                    const cell = document.createElement('td');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+
+                    const key = getCellKey(day, skill);
+                    checkbox.checked = data[key] || false;
+
+                    checkbox.addEventListener('change', (e) => {
+                        const newData = loadData();
+                        newData[key] = e.target.checked;
+                        saveData(newData);
+                        updateHeatmap();
+                        updateStats();
+                    });
+
+                    cell.appendChild(checkbox);
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const data = loadData();
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = '';
+
+            const completedToday = SKILLS.filter(s => {
+                const today = DAYS[new Date().getDay() || 0];
+                return data[getCellKey(today, s)];
+            }).length;
+
+            const completedWeek = new Set();
+            Object.keys(data).forEach(key => {
+                if (data[key]) {
+                    const [day] = key.split('-');
+                    completedWeek.add(day);
+                }
+            });
+
+            const totalActivities = DAYS.length * SKILLS.length;
+            const completedActivities = Object.values(data).filter(v => v).length;
+
+            const stats = [
+                { number: completedToday, label: 'Today' },
+                { number: completedWeek.size, label: 'Days active' },
+                { number: completedActivities, label: 'Total completed' },
+                { number: Math.round((completedActivities / totalActivities) * 100), label: 'Progress %' }
+            ];
+
+            stats.forEach(stat => {
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.innerHTML = `
+                    <div class="number">${stat.number}${stat.label === 'Progress %' ? '%' : ''}</div>
+                    <div class="label">${stat.label}</div>
+                `;
+                statsContainer.appendChild(card);
+            });
+        }
+
+        function updateHeatmap() {
+            const heatmapDiv = document.getElementById('heatmap');
+            heatmapDiv.innerHTML = '';
+
+            const data = loadData();
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            const colorClasses = ['heatmap-empty', 'heatmap-1', 'heatmap-2', 'heatmap-3', 'heatmap-4', 'heatmap-5', 'heatmap-6'];
+
+            for (let month = 0; month < 4; month++) {
+                const monthDate = new Date(currentYear, currentMonth + month, 1);
+                const monthName = monthDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                const monthSection = document.createElement('div');
+                monthSection.className = 'month-section';
+
+                const monthTitle = document.createElement('div');
+                monthTitle.className = 'month-title';
+                monthTitle.textContent = monthName;
+                monthSection.appendChild(monthTitle);
+
+                const grid = document.createElement('div');
+                grid.className = 'heatmap-grid';
+
+                const lastDay = new Date(currentYear, currentMonth + month + 1, 0).getDate();
+                const firstDay = monthDate.getDay();
+
+                for (let i = 0; i < firstDay; i++) {
+                    grid.appendChild(document.createElement('div'));
+                }
+
+                for (let day = 1; day <= lastDay; day++) {
+                    const dayDate = new Date(currentYear, currentMonth + month, day);
+                    const dayOfWeek = DAYS[dayDate.getDay() || 0];
+
+                    const square = document.createElement('div');
+                    square.className = 'heatmap-day';
+                    square.title = dayDate.toDateString();
+
+                    const completed = SKILLS.filter(s => data[getCellKey(dayOfWeek, s)]).length;
+                    const colorClass = colorClasses[completed];
+
+                    square.classList.add(colorClass);
+                    square.textContent = completed > 0 ? completed : '';
+
+                    grid.appendChild(square);
+                }
+
+                monthSection.appendChild(grid);
+                heatmapDiv.appendChild(monthSection);
+            }
+        }
+
+        initTrackerTable();
+        updateHeatmap();
+        updateStats();
+    </script>
+</body>
+</html>
